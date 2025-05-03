@@ -107,11 +107,6 @@ export default function Login() {
               <button type="submit" className="btn btn-primary">
                 Prisijungti
               </button>
-              <div className="mt-3">
-                <p>
-                  Neturite paskyros? <Link to="/signup">Registruotis</Link>
-                </p>
-              </div>
             </form>
           </div>
         </div>

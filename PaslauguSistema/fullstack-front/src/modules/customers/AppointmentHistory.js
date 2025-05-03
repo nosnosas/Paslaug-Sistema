@@ -81,6 +81,39 @@ const AppointmentHistory = () => {
     return true;
   });
 
+  const cancelAppointment = async (appointmentId) => {
+    if (!window.confirm("Ar tikrai norite atšaukti šį susitikimą?")) {
+      return;
+    }
+  
+    try {
+      setLoading(true);
+      const response = await axios.put(
+        `http://localhost:8080/customer/appointments/${appointmentId}/cancel`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+        }
+      );
+  
+      // Update the appointments list after cancellation
+      setAppointments(
+        appointments.map((appointment) => 
+          appointment.id === appointmentId ? { ...appointment, status: "CANCELLED" } : appointment
+        )
+      );
+      
+      setError("");
+    } catch (error) {
+      console.error("Error cancelling appointment:", error);
+      setError("Nepavyko atšaukti susitikimo. Bandykite dar kartą vėliau.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
         <div className="d-flex justify-content-center align-items-center vh-100">
@@ -125,12 +158,12 @@ const AppointmentHistory = () => {
               </div>
             </div>
 
-            {/* Debug info - only show in development */}
+            {/* Debug info - only show in development
             {process.env.NODE_ENV === "development" && (
                 <div className="alert alert-info small mb-4">
                   Vartotojo ID: {userId || "Nerasta"} | Rolė: KLIENTAS
                 </div>
-            )}
+            )} */}
 
             {error && (
                 <div className="alert alert-danger" role="alert">
@@ -187,6 +220,17 @@ const AppointmentHistory = () => {
                                   <p className="text-muted mb-1">Suteiktos paslaugos:</p>
                                   <p className="mb-0">{appointment.treatmentDetails}</p>
                                 </div>
+                            )}
+                            {appointment.status === "SCHEDULED" && (
+                              <div className="mt-3">
+                                <button 
+                                  className="btn btn-sm btn-danger"
+                                  onClick={() => cancelAppointment(appointment.id)}
+                                  disabled={loading}
+                                >
+                                  {loading ? "Atšaukiama..." : "Atšaukti susitikimą"}
+                                </button>
+                              </div>
                             )}
                           </div>
                         </div>

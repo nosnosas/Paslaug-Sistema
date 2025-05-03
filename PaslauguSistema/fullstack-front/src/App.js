@@ -2,6 +2,7 @@ import "./App.css";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import Navbar from "./layout/navbar";
 import Home from "./pages/Home";
+import ClientInformation from "./modules/employees/ClientInformation";
 import {
   BrowserRouter as Router,
   Routes,
@@ -233,12 +234,28 @@ function App() {
                         </PrivateRoute>
                       }
                   />
+                  <Route
+                      path="/employee/clients"
+                      element={
+                        <PrivateRoute allowedRoles={["EMPLOYEE", "ADMIN"]}>
+                          <ClientInformation />
+                        </PrivateRoute>
+                      }
+                  />
                 </>
             )}
 
             {/* Login and signup routes */}
             <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+            {/* <Route path="/signup" element={<Signup />} /> */}
+            <Route
+                path="/signup"
+                element={
+                  <PrivateRoute allowedRoles={["ADMIN"]}>
+                    <Signup />
+                  </PrivateRoute>
+                }
+            />
 
             {/* Redirect unknown routes to the homepage */}
             <Route path="*" element={<Navigate to="/" />} />

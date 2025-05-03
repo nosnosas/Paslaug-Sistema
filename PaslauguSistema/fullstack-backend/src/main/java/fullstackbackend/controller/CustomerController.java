@@ -81,4 +81,21 @@ public class CustomerController {
         return messageService.markMessageAsRead(id);
     }
 
+    @PutMapping("/appointments/{id}/cancel")
+public Appointment cancelAppointment(@PathVariable Long id) {
+    Appointment appointment = appointmentService.getAppointmentById(id);
+    appointment.setStatus("CANCELLED");
+    return appointmentService.updateAppointment(appointment, id);
+}
+
+    @GetMapping("/appointments/{id}")
+    public Appointment getAppointmentById(@PathVariable Long id) {
+        return appointmentService.getAppointmentById(id);
+    }
+
+    @PutMapping("/appointments/{id}/reschedule")
+    public Appointment rescheduleAppointment(@PathVariable Long id, @RequestBody Appointment updatedAppointment) {
+        return appointmentService.updateAppointment(updatedAppointment, id);
+    }
+
 }

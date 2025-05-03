@@ -95,6 +95,11 @@ export default function Navbar() {
                                         Vartotojai
                                     </Link>
                                 </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/signup">
+                                        Naujas vartotojas
+                                    </Link>
+                                </li>
                             </>
                         )}
                         {role === "EMPLOYEE" && (
@@ -127,6 +132,11 @@ export default function Navbar() {
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/employee/messages">
                                         Žinutės
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/employee/clients">
+                                        Klientų informacija
                                     </Link>
                                 </li>
                             </>
@@ -163,9 +173,6 @@ export default function Navbar() {
                             <>
                                 <Link className="btn btn-outline-light me-2" to="/login">
                                     Prisijungti
-                                </Link>
-                                <Link className="btn btn-outline-light" to="/signup">
-                                    Registracija
                                 </Link>
                             </>
                         )}

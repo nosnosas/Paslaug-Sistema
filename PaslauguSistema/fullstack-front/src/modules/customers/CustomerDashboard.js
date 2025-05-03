@@ -30,7 +30,7 @@ const CustomerDashboard = ({ customerId }) => {
 
   return (
       <div className="container mt-4">
-        <h2 className="text-center">Kliento valdymo skydelis</h2>
+        {/* <h2 className="text-center">Kliento valdymo skydelis</h2> */}
         <div className="tabs mb-4">
           <button
               onClick={() => setActiveTab("appointments")}

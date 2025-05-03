@@ -24,22 +24,22 @@ export default function ViewUser() {
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-md-8 col-lg-6 border rounded p-4 mt-4 shadow-lg">
-          <h2 className="text-center mb-4">User Details</h2>
+          <h2 className="text-center mb-4">Vartotojo detalės</h2>
 
           <div className="card">
             <div className="card-header text-center bg-primary text-white">
-              <h5 className="m-0">Details of User with ID: {user.id}</h5>
+              <h5 className="m-0">ID: {user.id}</h5>
             </div>
             <div className="card-body">
               <ul className="list-group list-group-flush">
                 <li className="list-group-item">
-                  <b>Name:</b> {user.name}
+                  <b>Vardas:</b> {user.name}
                 </li>
                 <li className="list-group-item">
-                  <b>Username:</b> {user.username}
+                  <b>Vartotojo vardas:</b> {user.username}
                 </li>
                 <li className="list-group-item">
-                  <b>Email:</b> {user.email}
+                  <b>El. paštas:</b> {user.email}
                 </li>
               </ul>
             </div>
@@ -50,7 +50,7 @@ export default function ViewUser() {
               className="btn btn-primary px-4 py-2 rounded-pill shadow-sm"
               to={"/"}
             >
-              <i className="fas fa-home"></i> Home
+              <i className="fas fa-home"></i> Namai
             </Link>
           </div>
         </div>

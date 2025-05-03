@@ -6,6 +6,10 @@ import { format } from "date-fns";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const TaskList = () => {
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [allTasks, setAllTasks] = useState([]);
+  
   const { auth, userId, role } = useAuth();
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
@@ -27,7 +31,7 @@ const TaskList = () => {
     try {
       setLoading(true);
       let endpoint = "http://localhost:8080/employee/tasks";
-
+  
       if (role === "EMPLOYEE") {
         if (filter === "assigned") {
           endpoint = `http://localhost:8080/employee/tasks/assigned/${userId}`;
@@ -35,20 +39,83 @@ const TaskList = () => {
           endpoint = `http://localhost:8080/employee/tasks/created/${userId}`;
         }
       }
-
+  
       const response = await axios.get(endpoint, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },
       });
-
+  
       const tasksData = Array.isArray(response.data) ? response.data : [];
-      setTasks(tasksData);
+      setAllTasks(tasksData);
+      
+      // Apply date filter if it exists
+      if (startDate || endDate) {
+        handleDateFilter(tasksData);
+      } else {
+        setTasks(tasksData);
+      }
     } catch (error) {
       console.error("Error fetching tasks:", error);
       setError("Nepavyko įkelti užduočių. Bandykite dar kartą vėliau.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDateFilter = (tasksToFilter = allTasks) => {
+    if (!startDate && !endDate) {
+      setTasks(tasksToFilter);
+      return;
+    }
+    
+    let filtered = [...tasksToFilter];
+    
+    if (startDate) {
+      const startDateTime = new Date(startDate);
+      filtered = filtered.filter(task => 
+        task.dueDate && new Date(task.dueDate) >= startDateTime
+      );
+    }
+    
+    if (endDate) {
+      const endDateTime = new Date(endDate);
+      endDateTime.setHours(23, 59, 59);
+      filtered = filtered.filter(task => 
+        task.dueDate && new Date(task.dueDate) <= endDateTime
+      );
+    }
+    
+    setTasks(filtered);
+  };
+  
+  const resetDateFilter = () => {
+    setStartDate("");
+    setEndDate("");
+    setTasks(allTasks);
+  };
+  
+  const deleteTask = async (taskId) => {
+    if (!window.confirm("Ar tikrai norite ištrinti šią užduotį?")) {
+      return;
+    }
+
+    try {
+      setError("");
+      await axios.delete(
+        `http://localhost:8080/employee/tasks/${taskId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+        }
+      );
+
+      // Remove the deleted task from the list
+      setTasks(tasks.filter(task => task.id !== taskId));
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      setError("Nepavyko ištrinti užduoties. Bandykite dar kartą.");
     }
   };
 
@@ -175,6 +242,43 @@ const TaskList = () => {
                     )}
                   </div>
                 </div>
+                
+                <div className="row mb-4 mt-3">
+                  <div className="col-md-4">
+                    <label htmlFor="startDate" className="form-label">Terminas nuo</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="startDate"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-md-4">
+                    <label htmlFor="endDate" className="form-label">Terminas iki</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="endDate"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-md-4 d-flex align-items-end">
+                    <button 
+                      className="btn btn-primary me-2"
+                      onClick={() => handleDateFilter()}
+                    >
+                      Filtruoti pagal datą
+                    </button>
+                    <button 
+                      className="btn btn-outline-secondary"
+                      onClick={resetDateFilter}
+                    >
+                      Atstatyti
+                    </button>
+                  </div>
+                </div>
 
                 {error && (
                     <div className="alert alert-danger" role="alert">
@@ -242,6 +346,15 @@ const TaskList = () => {
                                       onClick={() => handleViewTask(task)}
                                   >
                                     Peržiūrėti
+                                  </button>
+                                  <button
+                                    className="btn btn-sm btn-outline-danger ms-2"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      deleteTask(task.id);
+                                    }}
+                                  >
+                                    Ištrinti
                                   </button>
                                   {role === "EMPLOYEE" &&
                                       task.assignedTo?.id === userId && (

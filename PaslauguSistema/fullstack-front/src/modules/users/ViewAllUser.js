@@ -23,7 +23,7 @@ export default function ViewAllUser() {
     try {
       await axios.delete(`http://localhost:8080/user/${userId}`);
       loadUser(); // Reload the user list after deletion
-      setDeleteMessage("User deleted successfully!"); // Set the success message
+      setDeleteMessage("Naudotojas ištrintas sėkmingai!"); // Set the success message
     } catch (error) {
       console.error("There was an error deleting the user!", error);
       setDeleteMessage("There was an error deleting the user!"); // Set the error message
@@ -37,11 +37,11 @@ export default function ViewAllUser() {
     <div className="container">
       <div className="row">
         <div className="col-md-12 border rounded p-4 mt-2 shadow">
-          <h2 className="text-center m-4">User Details</h2>
+          <h2 className="text-center m-4">Naudotojų detalės</h2>
 
           {/* Add User Button */}
           <Link className="btn btn-primary add-user-btn" to={"/adduser"}>
-            <i className="fas fa-plus"></i> Add User
+            <i className="fas fa-plus"></i> Registruoti
           </Link>
 
           {/* Display the delete message */}
@@ -56,10 +56,10 @@ export default function ViewAllUser() {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Actions</th> {/* New column for actions */}
+                <th>Vardas</th>
+                <th>Vartotojo vardas</th>
+                <th>El. paštas</th>
+                <th>Veiksmai</th> {/* New column for actions */}
               </tr>
             </thead>
             <tbody>
@@ -75,7 +75,7 @@ export default function ViewAllUser() {
                       to={`/edituser/${user.id}`}
                       className="btn btn-warning btn-sm me-2"
                     >
-                      <i className="fas fa-edit"></i> Edit
+                      <i className="fas fa-edit"></i> Redaguoti
                     </Link>
 
                     {/* view Button */}
@@ -83,7 +83,7 @@ export default function ViewAllUser() {
                       to={`/viewuser/${user.id}`}
                       className="btn btn-info btn-sm me-2"
                     >
-                      <i className="fas fa-eye"></i> view
+                      <i className="fas fa-eye"></i> Žiūrėti
                     </Link>
 
                     {/* Delete Button */}
@@ -91,7 +91,7 @@ export default function ViewAllUser() {
                       onClick={() => deleteUser(user.id)}
                       className="btn btn-danger btn-sm"
                     >
-                      <i className="fas fa-trash-alt"></i> Delete
+                      <i className="fas fa-trash-alt"></i> Ištrinti
                     </button>
                   </td>
                 </tr>

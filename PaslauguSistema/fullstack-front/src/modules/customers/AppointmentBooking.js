@@ -151,11 +151,11 @@ const AppointmentBooking = () => {
                                 Užregistruoti susitikimą
                             </h2>
 
-                            {/* Debug info - only show in development */}{process.env.NODE_ENV === "development" && (
+                            {/* Debug info - only show in development{process.env.NODE_ENV === "development" && (
                             <div className="alert alert-info small mb-4">
                                 Vartotojo ID: {userId || "Nerasta"} | Rolė: {role === "CUSTOMER" ? "KLIENTAS" : role || "Nerasta"}
                             </div>
-                        )}
+                        )} */}
 
 
                             {error && (

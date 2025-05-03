@@ -6,6 +6,10 @@ import { format } from "date-fns";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const EmployeeAppointments = () => {
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [allAppointments, setAllAppointments] = useState([]);
+
   const { auth, userId } = useAuth();
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
@@ -35,10 +39,42 @@ const EmployeeAppointments = () => {
             },
           }
       );
+      setAllAppointments(response.data);
       setAppointments(response.data);
     } catch (error) {
       console.error("Klaida gaunant susitikimus:", error);
       setError("Nepavyko įkelti susitikimų. Bandykite dar kartą vėliau.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteAppointment = async (appointmentId) => {
+    if (!window.confirm("Ar tikrai norite ištrinti šį susitikimą?")) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError("");
+
+      await axios.delete(
+          `http://localhost:8080/employee/appointments/${appointmentId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${auth.token}`,
+            },
+          }
+      );
+
+      setSuccess("Susitikimas sėkmingai ištrintas!");
+      setAppointments(appointments.filter(app => app.id !== appointmentId));
+    } catch (error) {
+      console.error("Klaida ištrinant susitikimą:", error);
+      setError(
+          error.response?.data?.message ||
+          "Nepavyko ištrinti susitikimo. Bandykite dar kartą."
+      );
     } finally {
       setLoading(false);
     }
@@ -88,6 +124,41 @@ const EmployeeAppointments = () => {
     }
   };
 
+
+  const handleFilter = () => {
+    if (!startDate && !endDate) {
+      setAppointments(allAppointments);
+      return;
+    }
+
+    let filtered = [...allAppointments];
+
+    if (startDate) {
+      const startDateTime = new Date(startDate);
+      filtered = filtered.filter(appointment =>
+          new Date(appointment.appointmentDate) >= startDateTime
+      );
+    }
+
+    if (endDate) {
+      const endDateTime = new Date(endDate);
+      endDateTime.setHours(23, 59, 59);
+      filtered = filtered.filter(appointment =>
+          new Date(appointment.appointmentDate) <= endDateTime
+      );
+    }
+
+    setAppointments(filtered);
+  };
+
+  // Add a reset filter function:
+
+  const resetFilter = () => {
+    setStartDate("");
+    setEndDate("");
+    setAppointments(allAppointments);
+  };
+
   if (loading && appointments.length === 0) {
     return (
         <div className="container py-5">
@@ -110,6 +181,42 @@ const EmployeeAppointments = () => {
                   <h2 className="card-title mb-0">Susitikimų valdymas</h2>
                 </div>
 
+                <div className="row mb-4">
+                  <div className="col-md-4">
+                    <label htmlFor="startDate" className="form-label">Nuo datos</label>
+                    <input
+                        type="date"
+                        className="form-control"
+                        id="startDate"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-md-4">
+                    <label htmlFor="endDate" className="form-label">Iki datos</label>
+                    <input
+                        type="date"
+                        className="form-control"
+                        id="endDate"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-md-4 d-flex align-items-end">
+                    <button
+                        className="btn btn-primary me-2"
+                        onClick={handleFilter}
+                    >
+                      Filtruoti
+                    </button>
+                    <button
+                        className="btn btn-outline-secondary"
+                        onClick={resetFilter}
+                    >
+                      Atstatyti
+                    </button>
+                  </div>
+                </div>
                 {error && (
                     <div className="alert alert-danger" role="alert">
                       {error}
@@ -170,6 +277,12 @@ const EmployeeAppointments = () => {
                                 }}
                             >
                               Peržiūrėti
+                            </button>
+                            <button
+                                className="btn btn-sm btn-danger ms-2"
+                                onClick={() => handleDeleteAppointment(appointment.id)}
+                            >
+                              Ištrinti
                             </button>
                           </td>
                         </tr>
@@ -287,6 +400,16 @@ const EmployeeAppointments = () => {
                             disabled={loading}
                         >
                           {loading ? "Atnaujinama..." : "Atnaujinti"}
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-danger me-2"
+                            onClick={() => {
+                              setShowViewModal(false);
+                              handleDeleteAppointment(selectedAppointment.id);
+                            }}
+                        >
+                          Ištrinti
                         </button>
                       </div>
                     </form>

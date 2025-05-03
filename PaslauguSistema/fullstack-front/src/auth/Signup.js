@@ -5,19 +5,20 @@ import { useAuth } from "../context/AuthContext"; // Import useAuth
 
 export default function Signup() {
   let navigate = useNavigate();
-  const { login } = useAuth(); // Get the login function
+  // const { login } = useAuth(); // Get the login function
 
   const [user, setUser] = useState({
     name: "",
     username: "",
     email: "",
     password: "",
-    role: "", // Add an initial empty value
+    role: "",
     phoneNumber: "",
     address: "",
   });
 
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const { name, username, email, password, role, phoneNumber, address } = user;
 
@@ -36,16 +37,34 @@ export default function Signup() {
       console.log("Signup response:", response.data);
 
       if (response.data.status === "success") {
-        // Use the login function from context instead of directly setting localStorage
-        login({
-          token: response.data.token,
-          username: response.data.username,
-          role: response.data.role,
-          userId: response.data.userId || response.data.id, // Try both fields
+        //   // Use the login function from context instead of directly setting localStorage
+        //   login({
+        //     token: response.data.token,
+        //     username: response.data.username,
+        //     role: response.data.role,
+        //     userId: response.data.userId || response.data.id, // Try both fields
+        //   });
+
+        //   // Redirect to home page
+        //   navigate("/");
+        // }
+        setSuccess("Registracija sėkminga! Dabar galite prisijungti.");
+
+        // Clear the form
+        setUser({
+          name: "",
+          username: "",
+          email: "",
+          password: "",
+          role: "",
+          phoneNumber: "",
+          address: "",
         });
 
-        // Redirect to home page
-        navigate("/");
+        // Redirect to login page after 3 seconds
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
       }
     } catch (error) {
       console.error("Signup error:", error);
@@ -61,7 +80,7 @@ export default function Signup() {
       <div className="container">
         <div className="row">
           <div className="col-md-6 offset-md-3 border rounded p-4 mt-2 shadow">
-            <h2 className="m-4">Registracija</h2>
+            <h2 className="m-4">Sukurti naują vartotoją</h2>
 
             {error && (
                 <div className="alert alert-danger" role="alert">
@@ -69,6 +88,11 @@ export default function Signup() {
                 </div>
             )}
 
+            {success && (
+                <div className="alert alert-success" role="alert">
+                  {success}
+                </div>
+            )}
             <form onSubmit={(e) => onSubmit(e)}>
               <div className="row">
                 <div className="mb-3 col-md-6 text-start">
@@ -186,9 +210,9 @@ export default function Signup() {
                 Registruotis
               </button>
             </form>
-            <div className="mt-3">
+            {/* <div className="mt-3">
               Jau turite paskyrą? <Link to="/login">Prisijungti</Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

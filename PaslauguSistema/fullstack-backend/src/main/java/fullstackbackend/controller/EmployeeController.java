@@ -201,4 +201,34 @@ public class EmployeeController {
     public Appointment updateAppointment(@RequestBody Appointment appointment, @PathVariable Long id) {
         return appointmentService.updateAppointment(appointment, id);
     }
+
+    @DeleteMapping("/tasks/{id}")
+    public ResponseEntity<Map<String, String>> deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Task with id " + id + " has been successfully deleted.");
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/appointments/{id}")
+    public ResponseEntity<Map<String, String>> deleteAppointment(@PathVariable Long id) {
+        appointmentService.deleteAppointment(id);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Appointment with id " + id + " has been successfully deleted.");
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/documents/{id}")
+    public ResponseEntity<Map<String, String>> deleteDocument(@PathVariable Long id) {
+        documentService.deleteDocument(id);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Document with id " + id + " has been successfully deleted.");
+
+        return ResponseEntity.ok(response);
+    }
 }
