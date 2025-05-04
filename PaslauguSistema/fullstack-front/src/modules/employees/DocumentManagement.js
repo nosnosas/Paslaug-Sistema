@@ -319,6 +319,36 @@ const DocumentManagement = () => {
         }
     };
 
+    const translateStatus = (status) => {
+        switch (status) {
+            case "DRAFT":
+                return "Juodraštis";
+            case "SUBMITTED":
+                return "Pateiktas";
+            case "APPROVED":
+                return "Patvirtintas";
+            case "REJECTED":
+                return "Atmestas";
+            default:
+                return status;
+        }
+    };
+
+    const translateDocumentType = (type) => {
+        switch (type) {
+            case "SOCIAL_SERVICE_CONTRACT":
+                return "Socialinių paslaugų sutartys";
+            case "REPORT":
+                return "Ataskaitos";
+            case "ASSISTANCE_PLAN":
+                return "Pagalbos planai";
+            case "OTHER":
+                return "Kiti";
+            default:
+                return type;
+        }
+    };
+
     const handleViewDocument = (document) => {
         setSelectedDocument(document);
         setShowViewModal(true);
@@ -381,14 +411,14 @@ const DocumentManagement = () => {
                                     {documents.map((document) => (
                                         <tr key={document.id}>
                                             <td>{document.title}</td>
-                                            <td>{document.documentType}</td>
+                                            <td>{translateDocumentType(document.documentType)}</td>
                                             <td>
                           <span
                               className={`badge ${getStatusBadgeClass(
                                   document.status
                               )}`}
                           >
-                            {document.status}
+                            {translateStatus(document.status)}
                           </span>
                                             </td>
                                             <td>{document.createdBy?.name || "Unknown"}</td>
@@ -404,7 +434,7 @@ const DocumentManagement = () => {
                                                         setShowViewModal(true);
                                                     }}
                                                 >
-                                                    Peržėti
+                                                    Peržiūrėti
                                                 </button>
                                                 <button
                                                     className="btn btn-sm btn-danger ms-2"
@@ -637,9 +667,9 @@ const DocumentManagement = () => {
                                             }
                                         >
                                             <option value="DRAFT">Juodraštis</option>
-                                            <option value="SUBMITTED">Priimta</option>
-                                            <option value="APPROVED">Patvirtinta</option>
-                                            <option value="REJECTED">Atšauktas</option>
+                                            <option value="SUBMITTED">Pateiktas</option>
+                                            <option value="APPROVED">Patvirtintas</option>
+                                            <option value="REJECTED">Atmestas</option>
                                         </select>
                                     </div>
                                     <div className="mb-3">
@@ -700,13 +730,12 @@ const DocumentManagement = () => {
                 </div>
             )}
 
-            {/* Upload Document Modal */}
             {showUploadModal && (
                 <div className="modal show" style={{ display: "block" }}>
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title">Upload Document</h5>
+                                <h5 className="modal-title">Įkelti dokumentą</h5>
                                 <button
                                     type="button"
                                     className="btn-close"
@@ -717,7 +746,7 @@ const DocumentManagement = () => {
                                 <form onSubmit={handleUpload}>
                                     <div className="mb-3">
                                         <label htmlFor="documentType" className="form-label">
-                                            Document Type
+                                            Dokumento tipas
                                         </label>
                                         <select
                                             className="form-select"
@@ -735,7 +764,7 @@ const DocumentManagement = () => {
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="file" className="form-label">
-                                            Select File to Upload
+                                            Pasirinkti failą
                                         </label>
                                         <input
                                             type="file"
@@ -746,11 +775,11 @@ const DocumentManagement = () => {
                                             accept=".pdf,.doc,.docx,.csv"
                                         />
                                         <div className="form-text">
-                                            Supported formats: PDF, Word (DOC, DOCX), CSV
+                                            Palaikomi formatai: PDF, Word (DOC, DOCX), CSV
                                         </div>
                                         {selectedFile && (
                                             <div className="mt-2">
-                                                <strong>Selected file:</strong> {selectedFile.name}
+                                                <strong>Pasirinktas failas:</strong> {selectedFile.name}
                                             </div>
                                         )}
                                     </div>
@@ -760,7 +789,7 @@ const DocumentManagement = () => {
                                             className="btn btn-secondary"
                                             onClick={() => setShowUploadModal(false)}
                                         >
-                                            Cancel
+                                            Atšaukti
                                         </button>
                                         <button
                                             type="submit"
@@ -769,15 +798,15 @@ const DocumentManagement = () => {
                                         >
                                             {loading ? (
                                                 <>
-                          <span
-                              className="spinner-border spinner-border-sm me-2"
-                              role="status"
-                              aria-hidden="true"
-                          ></span>
-                                                    Uploading...
+                        <span
+                            className="spinner-border spinner-border-sm me-2"
+                            role="status"
+                            aria-hidden="true"
+                        ></span>
+                                                    Įkeliama...
                                                 </>
                                             ) : (
-                                                "Upload"
+                                                "Įkelti"
                                             )}
                                         </button>
                                     </div>
